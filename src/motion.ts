@@ -1,5 +1,5 @@
 import { Rive, Layout, Fit, Alignment, RuntimeLoader } from "@rive-app/canvas";
-RuntimeLoader.setWasmUrl("/assets/rive/rive.wasm");
+RuntimeLoader.setWasmUrl(`${import.meta.env.BASE_URL}assets/rive/rive.wasm`);
 export class ToyMotion {
   private players = new Set<Rive>();
   handCanvas = document.createElement("canvas");
@@ -29,7 +29,7 @@ export class ToyMotion {
   ) {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const player = new Rive({
-      src: "/assets/rive/wood-feedback.riv",
+      src: `${import.meta.env.BASE_URL}assets/rive/wood-feedback.riv`,
       canvas,
       artboard,
       shouldDisableRiveListeners: true,

@@ -62,7 +62,7 @@ export class Board extends Phaser.Scene {
     super("board");
   }
   preload() {
-    this.load.image("beech", "/assets/wood/beech.jpg");
+    this.load.image("beech", `${import.meta.env.BASE_URL}assets/wood/beech.jpg`);
   }
   create() {
     this.wood = this.textures.get("beech").getSourceImage() as HTMLImageElement;

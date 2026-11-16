@@ -15,7 +15,7 @@ export function art(level: Level, colored = false, cls = "") {
   const ps = level.poses.map((p, i) => poly(i, p)),
     b = bounds(ps),
     id = "grain-" + artId++;
-  return `<svg class="${cls}" viewBox="${b.minX - 0.2} ${b.minY - 0.2} ${b.maxX - b.minX + 0.4} ${b.maxY - b.minY + 0.4}" aria-hidden="true"><defs><pattern id="${id}" patternUnits="userSpaceOnUse" width="3" height="3"><image href="/assets/wood/beech.jpg" width="3" height="3"/></pattern></defs>${
+  return `<svg class="${cls}" viewBox="${b.minX - 0.2} ${b.minY - 0.2} ${b.maxX - b.minX + 0.4} ${b.maxY - b.minY + 0.4}" aria-hidden="true"><defs><pattern id="${id}" patternUnits="userSpaceOnUse" width="3" height="3"><image href="${import.meta.env.BASE_URL}assets/wood/beech.jpg" width="3" height="3"/></pattern></defs>${
     colored
       ? ps
           .map((p, i) => {
