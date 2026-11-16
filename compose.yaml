@@ -1,0 +1,7 @@
+services:
+  tangram:
+    build: .
+    image: tangram-game:local
+    ports:
+      - "${PORT:-8080}:8080"
+    restart: unless-stopped

@@ -1,0 +1,26 @@
+{
+  "name": "sevenfold-tangram",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc && vite build",
+    "generate": "tsx scripts/generate.ts",
+    "test": "tsx scripts/test.ts",
+    "generate:wood": "tsx scripts/wood-tiler.ts && tsx scripts/wood-content.ts",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "@rive-app/canvas": "^2.50.0",
+    "phaser": "^3.90.0",
+    "polygon-clipping": "^0.15.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "prettier": "^3.10.1",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.2.0"
+  }
+}
