@@ -78,3 +78,7 @@ npm run build -- --base=/play/tangram/
 ```
 
 将 `dist/` 发布到网站的 `/play/tangram/` 静态目录；无尾斜杠入口可重写到该目录的 `index.html`。Phaser 木纹、Rive 动画和 WASM 跟随 Vite 的 `BASE_URL`，不依赖站点根目录。默认不传 `--base` 时仍支持根路径部署。
+
+## Native 导航栏与 WebView 高度
+
+页面使用 Web 实际可用高度（布局视口与未缩放的 visualViewport 取较小值），不会根据物理屏幕高度推测或重复扣除导航栏。窗口、可见视口和父容器尺寸变化时重新等比适配画布；较矮横屏将操作区移至侧边。原生宿主应将 WebView 的实际可视区域设置在导航栏之下；若宿主直接覆盖 WebView 且不更新其视口，网页无法自行得知覆盖区域。

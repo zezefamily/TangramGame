@@ -122,3 +122,45 @@ assert.equal(
 console.log(
   "PASS: 8 distinct named wooden puzzles, complete visible silhouettes, no overlaps, incomplete solutions rejected.",
 );
+
+// Native bars change the web viewport, not the geometry or the device screen size.
+const { availableViewport, fitBoard } = await import("../src/viewport");
+for (const nav of [0, 44, 64, 96, 144]) {
+  const wide = availableViewport({ width: 1024, height: 768 - nav });
+  assert.equal(
+    wide.height,
+    768 - nav,
+    "native bar must not be subtracted twice",
+  );
+  assert.equal(wide.portrait, false);
+  assert.equal(wide.compact, nav >= 44);
+  const tall = availableViewport({ width: 768, height: 1024 - nav });
+  assert.equal(tall.portrait, true);
+  for (const [bw, bh] of [
+    [1100, 700],
+    [700, 960],
+  ]) {
+    const fit = fitBoard(wide.width - 220, wide.height - 90, bw, bh);
+    assert(
+      fit.width <= wide.width - 220 + 0.001 &&
+        fit.height <= wide.height - 90 + 0.001,
+    );
+    assert(
+      Math.abs(fit.width / fit.height - bw / bh) < 1e-9,
+      "uniform board scale",
+    );
+  }
+}
+assert.equal(
+  availableViewport({ width: 1024, height: 768, visualHeight: 650 }).height,
+  650,
+);
+assert.equal(
+  availableViewport({ width: 1024, height: 768, visualHeight: 384, scale: 2 })
+    .height,
+  768,
+  "pinch zoom must not reflow the game",
+);
+console.log(
+  "PASS: native-inset viewport, visual viewport, pinch zoom, and uniform board fitting.",
+);

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { boardSize } from "./layout";
+import { readViewport, fitBoard } from "./viewport";
 import { Board, type Level } from "./board";
 import levelsData from "./levels.json";
 import woodLevels from "./wood-levels.json";
@@ -80,8 +81,17 @@ let active = false,
   showClock = false;
 let lastResult = { independent: false, best: false };
 const board = new Board();
-const portraitLayout = () =>
-  matchMedia("(max-width: 900px) and (orientation: portrait)").matches;
+let viewport = readViewport();
+function applyViewport() {
+  viewport = readViewport();
+  document.documentElement.style.setProperty(
+    "--app-height",
+    `${viewport.height}px`,
+  );
+  document.documentElement.dataset.compactHeight = String(viewport.compact);
+}
+applyViewport();
+const portraitLayout = () => viewport.portrait;
 board.portrait = portraitLayout();
 const stage = document.createElement("div");
 stage.id = "board-stage";
@@ -159,9 +169,9 @@ function render() {
     `<footer class="app-tabs" aria-label="主要导航"><button data-action="home" ${screen === "home" ? 'aria-current="page"' : ""}><b aria-hidden="true">◩</b><span>玩具桌</span></button><button data-action="levels" ${screen === "levels" ? 'aria-current="page"' : ""}><b aria-hidden="true">▤</b><span>图谱</span></button><button data-action="collection" ${screen === "collection" ? 'aria-current="page"' : ""}><b aria-hidden="true">✶</b><span>我的作品</span></button></footer><div id="modal-root"></div><div id="toast" role="status"></div>`;
   if (screen === "game") {
     document.querySelector("#canvas-slot")!.appendChild(stage);
-    board.setPortrait(portraitLayout());
-    board.scale.getParentBounds();
-    board.scale.refresh();
+    boardObserver.disconnect();
+    boardObserver.observe(document.querySelector(".workbench")!);
+    scheduleBoardLayout();
     active = true;
     board.paused = pause;
     board.paint();
@@ -183,13 +193,43 @@ const game = new Phaser.Game({
   input: { activePointers: 2 },
   banner: false,
 });
-new ResizeObserver(() => {
-  if (board.g && screen === "game") {
+let layoutFrame = 0;
+function scheduleBoardLayout() {
+  if (layoutFrame) return;
+  layoutFrame = requestAnimationFrame(() => {
+    layoutFrame = 0;
+    if (!board.g || screen !== "game") return;
     board.setPortrait(portraitLayout());
+    const slot = document.querySelector<HTMLElement>("#canvas-slot");
+    const workbench = document.querySelector<HTMLElement>(".workbench");
+    if (
+      !slot ||
+      !workbench ||
+      workbench.clientWidth <= 0 ||
+      workbench.clientHeight <= 0
+    )
+      return;
+    const size = boardSize(board.portrait);
+    const fitted = fitBoard(
+      workbench.clientWidth,
+      workbench.clientHeight,
+      size.width,
+      size.height,
+    );
+    slot.style.width = `${fitted.width}px`;
+    slot.style.height = `${fitted.height}px`;
     board.scale.getParentBounds();
     board.scale.refresh();
-  }
-}).observe(stage);
+  });
+}
+const boardObserver = new ResizeObserver(scheduleBoardLayout);
+function viewportChanged() {
+  applyViewport();
+  scheduleBoardLayout();
+}
+window.addEventListener("resize", viewportChanged);
+window.addEventListener("pageshow", viewportChanged);
+window.visualViewport?.addEventListener("resize", viewportChanged);
 function attachHand() {
   if (motion.handReady && board.g) {
     if (!game.textures.exists("rive-hand"))

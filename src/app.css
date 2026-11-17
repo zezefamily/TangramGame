@@ -168,8 +168,8 @@ body[data-screen="game"] .toy-header {
   display: none;
 }
 body[data-screen="game"] {
-  height: 100svh;
-  height: 100dvh;
+  min-height: 0;
+  height: var(--app-height, 100dvh);
   overflow: hidden;
 }
 body[data-screen="game"] #app {
@@ -311,8 +311,7 @@ body[data-screen="game"] #app {
 }
 .modal {
   border-radius: 24px;
-  max-height: 90svh;
-  max-height: 90dvh;
+  max-height: calc(var(--app-height, 100dvh) - 32px);
   padding: 32px 24px 26px;
 }
 .modal h2 {
@@ -632,68 +631,67 @@ body[data-screen="game"] #app {
     font-size: 27px;
   }
 }
-@media (max-height: 540px) and (orientation: landscape) {
-  .game-page {
-    padding: 6px max(8px, env(safe-area-inset-right)) 6px
-      max(8px, env(safe-area-inset-left));
-    display: grid;
-    grid-template-columns: 1fr 178px;
-    grid-template-rows: 58px minmax(0, 1fr);
-    gap: 4px;
-  }
-  .play-top {
-    grid-column: 1 / -1;
-    min-height: 0;
-    grid-template-columns: 48px auto 1fr auto;
-    gap: 10px;
-  }
-  .lesson-title {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  .lesson-title h1 {
-    font-size: 24px;
-  }
-  .little-mission {
-    font-size: 18px;
-    padding: 0;
-  }
-  .paper-back,
-  .play-utilities .round-tool {
-    min-width: 46px;
-    min-height: 46px;
-  }
-  .workbench {
-    grid-column: 1;
-    grid-row: 2;
-    height: 100%;
-  }
-  .tools {
-    grid-column: 2;
-    grid-row: 2;
-    height: 100%;
-    padding: 8px;
-    gap: 8px;
-    align-content: center;
-    border-radius: 18px;
-  }
-  .wood-tool,
-  .paper-tool {
-    flex: 1 1 65px;
-    min-width: 65px;
-    min-height: 64px;
-    padding: 6px 2px;
-    flex-direction: column;
-  }
-  .wood-tool b,
-  .paper-tool b {
-    font-size: 28px;
-  }
-  .wood-tool span,
-  .paper-tool span {
-    font-size: 18px;
-  }
+
+:root[data-compact-height="true"] .game-page {
+  padding: 6px max(8px, env(safe-area-inset-right)) 6px
+    max(8px, env(safe-area-inset-left));
+  display: grid;
+  grid-template-columns: 1fr 178px;
+  grid-template-rows: 58px minmax(0, 1fr);
+  gap: 4px;
+}
+:root[data-compact-height="true"] .play-top {
+  grid-column: 1 / -1;
+  min-height: 0;
+  grid-template-columns: 48px auto 1fr auto;
+  gap: 10px;
+}
+:root[data-compact-height="true"] .lesson-title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+:root[data-compact-height="true"] .lesson-title h1 {
+  font-size: 24px;
+}
+:root[data-compact-height="true"] .little-mission {
+  font-size: 18px;
+  padding: 0;
+}
+:root[data-compact-height="true"] .paper-back,
+:root[data-compact-height="true"] .play-utilities .round-tool {
+  min-width: 46px;
+  min-height: 46px;
+}
+:root[data-compact-height="true"] .workbench {
+  grid-column: 1;
+  grid-row: 2;
+  height: 100%;
+}
+:root[data-compact-height="true"] .tools {
+  grid-column: 2;
+  grid-row: 2;
+  height: 100%;
+  padding: 8px;
+  gap: 8px;
+  align-content: center;
+  border-radius: 18px;
+}
+:root[data-compact-height="true"] .wood-tool,
+:root[data-compact-height="true"] .paper-tool {
+  flex: 1 1 65px;
+  min-width: 65px;
+  min-height: 64px;
+  padding: 6px 2px;
+  flex-direction: column;
+}
+:root[data-compact-height="true"] .wood-tool b,
+:root[data-compact-height="true"] .paper-tool b {
+  font-size: 28px;
+}
+:root[data-compact-height="true"] .wood-tool span,
+:root[data-compact-height="true"] .paper-tool span {
+  font-size: 18px;
 }
 
 .brand {
@@ -709,4 +707,29 @@ button:disabled {
 .wood-tool:disabled span,
 .wood-tool:disabled b {
   color: #7d6b53;
+}
+
+/* Fit one rectangle before Phaser scales it; independent CSS clamps can distort a canvas. */
+#canvas-slot {
+  flex: 0 0 auto;
+}
+#canvas-slot canvas {
+  max-width: none;
+  max-height: none;
+}
+.modal-backdrop {
+  bottom: auto;
+  height: var(--app-height, 100dvh);
+}
+/* An existing canvas must not impose a minimum grid width during a host resize. */
+.game-page,
+.workbench,
+.little-mission {
+  min-width: 0;
+}
+:root[data-compact-height="true"] .game-page {
+  grid-template-columns: minmax(0, 1fr) 178px;
+}
+:root[data-compact-height="true"] .play-top {
+  grid-template-columns: 48px auto minmax(0, 1fr) auto;
 }
